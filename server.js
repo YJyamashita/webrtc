@@ -3,7 +3,6 @@ var webSocketServ = require('ws').Server;
 var wss = new webSocketServ({
 	port: 9090
 });
-
 var users = {};
 wss.on('connection', function (conn) {
 	console.log("User connected");
