@@ -1,5 +1,6 @@
 const {
-	send
+	send,
+	connected
 } = require("process");
 
 var connection = new WebSocket('ws://localhost:9090');
@@ -14,15 +15,39 @@ connection.onmessage = function (msg) {
 		case "login":
 			loginProcess(data.success);
 			break;
+		case "offer":
+			offerProcess(data.offer, data.name);
+			break;
 	}
 }
 connection.onerror = function (error) {
 	console.log(error);
 }
 
+var connected_user;
 var local_video = document.querySelector("#local-video");
+var call_btn = document.querySelector("#call_btn");
+var call_to_username_input = document.querySelector("#username_input");
+
+call_btn.addEventListener("click", function () {
+	var call_to_username = call_to_username_input.value;
+	if (call_to_username.lengh > 0) {
+		connected_user = call_to_username;
+
+		myConn.createOffer(function (offer) {
+			send({
+				type: "offer",
+				offer: offer
+			})
+			myConn.setLocalDescription(offer)
+		}, function (error) {
+			alert("Offer has not created");
+		})
+	}
+})
 var name;
 var connectedUser;
+var myConn;
 var url_string = window.location.href;
 var url = new URL(url_string);
 var username = url.searchParams.get("username");
@@ -60,8 +85,31 @@ function loginProcess(success) {
 		}, function (myStream) {
 			stream = myStream;
 			local_video.srcObject = stream;
+
+			var configuration = {
+				"iceServers": [{
+					"url": "stun:stun2.1.google.com:19302"
+				}]
+			}
+
+			myConn = new webkitRTCPeerConnection(configuration, {
+				optional: [{
+					RtpDataChannels: true
+				}]
+			});
+
+			myConn.addTrack(stream);
 		}, function (error) {
 			console.log(error);
 		});
+
+
 	}
+}
+
+function offerProcess(offer, name) {
+	connected_user = name;
+	myConn.setRemoteDescription(new RTCSessionDescription(offer))
+
+	// create answer to an offer or user A.
 }

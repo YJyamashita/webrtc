@@ -5,6 +5,7 @@ var wss = new webSocketServ({
 });
 
 var users = {};
+var otherUser;
 wss.on('connection', function (conn) {
 	console.log("User connected");
 
@@ -32,6 +33,18 @@ wss.on('connection', function (conn) {
 					sendToOtherUser(conn, {
 						type: "login",
 						success: true
+					})
+				}
+				break;
+			case "offer":
+				var connect = users[data.name];
+				if (connect != null) {
+					conn.otherUser = data.name;
+
+					sendToOtherUser(conn, {
+						type: "offer",
+						offer: data.offer,
+						name: conn.name
 					})
 				}
 				break;
