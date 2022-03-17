@@ -1,8 +1,3 @@
-const {
-	send,
-	connected
-} = require("process");
-
 var connection = new WebSocket('ws://localhost:9090');
 
 connection.onopen = function () {
@@ -17,6 +12,9 @@ connection.onmessage = function (msg) {
 			break;
 		case "offer":
 			offerProcess(data.offer, data.name);
+			break;
+		case "answer":
+			answerProcess(data.answer);
 			break;
 	}
 }
@@ -112,4 +110,17 @@ function offerProcess(offer, name) {
 	myConn.setRemoteDescription(new RTCSessionDescription(offer))
 	alert(name);
 	// create answer to an offer or user A.
+	myConn.createAnswer(function (answer) {
+		myConn.setLocalDescription(answer);
+		send({
+			type: "answer",
+			answer: answer
+		})
+	}, function (error) {
+		alert("Answer has not created");
+	})
+}
+
+function answerProcess(data.answer) {
+	myConn.setRemoteDescription(new RTCSessionDescription(answer))
 }

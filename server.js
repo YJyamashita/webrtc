@@ -2,7 +2,7 @@ var webSocketServ = require('ws').Server;
 
 var wss = new webSocketServ({
 	port: 9090
-});
+})
 
 var users = {};
 var otherUser;
@@ -45,6 +45,16 @@ wss.on('connection', function (conn) {
 						type: "offer",
 						offer: data.offer,
 						name: conn.name
+					})
+				}
+				break;
+			case "answer":
+				var connect = users[data.name];
+				if (connect != null) {
+					conn.otherUser = data.name
+					sendToOtherUser(connect, {
+						type: "answer",
+						answer: data.answer
 					})
 				}
 				break;
