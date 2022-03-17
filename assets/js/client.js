@@ -98,7 +98,7 @@ function loginProcess(success) {
 				}]
 			});
 
-			myConn.addTrack(stream);
+			myConn.addStream(stream);
 		}, function (error) {
 			console.log(error);
 		});
@@ -110,6 +110,6 @@ function loginProcess(success) {
 function offerProcess(offer, name) {
 	connected_user = name;
 	myConn.setRemoteDescription(new RTCSessionDescription(offer))
-
+	alert(name);
 	// create answer to an offer or user A.
 }

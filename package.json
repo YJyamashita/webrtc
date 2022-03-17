@@ -12,6 +12,6 @@
   "author": "Km Habib",
   "license": "ISC",
   "dependencies": {
-    "wscat": "^4.0.1"
+    "wscat": "^5.1.0"
   }
 }
